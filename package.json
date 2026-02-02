@@ -6,7 +6,7 @@
  "scripts": {
   "dev": "node index.js",
   "worker": "node worker.js",
-  "start": "node index.js"
+  "start": "node api.js"
 },
   "keywords": [],
   "author": "",
