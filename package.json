@@ -3,11 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
- "scripts": {
-  "dev": "node index.js",
-  "worker": "node worker.js",
-  "start": "node api.js"
-},
+  "scripts": {
+    "dev": "node index.js",
+    "worker": "node worker.js",
+    "start": "node api.js"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -15,7 +15,9 @@
   "dependencies": {
     "bullmq": "^5.67.2",
     "express": "^4.22.1",
+    "flyctl": "^1.2.6",
     "ioredis": "^5.9.2",
-    "pdf-to-printer": "^5.6.1"
+    "pdf-to-printer": "^5.6.1",
+    "react": "^19.2.4"
   }
 }
