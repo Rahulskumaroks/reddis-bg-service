@@ -1,14 +1,16 @@
-import { Queue } from "bullmq";
 import IORedis from "ioredis";
 
 export const connection = new IORedis({
   host: process.env.UPSTASH_REDIS_HOST,
-  port: process.env.UPSTASH_REDIS_PORT,
+  port: Number(process.env.UPSTASH_REDIS_PORT),
   username: "default",
   password: process.env.UPSTASH_REDIS_PASSWORD,
-  tls: {} // REQUIRED for Upstash
-});
 
-export const pdfQueue = new Queue("pdf-queue", {
-  connection,
+  tls: {},
+
+  // 🔴 REQUIRED BY BULLMQ
+  maxRetriesPerRequest: null,
+
+  // 🟡 Recommended for managed Redis
+  enableReadyCheck: false,
 });
