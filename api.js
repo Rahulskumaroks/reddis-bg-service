@@ -1,16 +1,19 @@
 import express from "express";
+import cors from "cors";
 import { pdfQueue, connection } from "./queue.js";
 import { QueueEvents } from "bullmq";
 
 const app = express();
+
+// CORS MUST COME FIRST
+app.use(cors({
+  origin: "*", // demo only
+  methods: ["GET", "POST"],
+}));
+
 app.use(express.json());
 
 const queueEvents = new QueueEvents("pdf-queue", { connection });
-
-app.use(cors({
-  origin: "*", // 🔴 demo only
-  methods: ["GET", "POST"],
-}));
 
 app.post("/generate-pdf", async (req, res) => {
   const { pages = 10 } = req.body;
@@ -38,20 +41,15 @@ app.get("/generate-pdf/:id", async (req, res) => {
 
   const state = await job.getState();
 
-  let nextPollIn = 3000;
-  if (job.progress < 30) nextPollIn = 2000;
-  else if (job.progress < 80) nextPollIn = 5000;
-  else nextPollIn = 8000;
-
   res.json({
     jobId: job.id,
     status: state.toUpperCase(),
     progress: job.progress,
-    nextPollIn,
     result: job.returnvalue || null,
   });
 });
 
-app.listen(3000, () => {
-  console.log("API running on http://localhost:3000");
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`API running on port ${PORT}`);
 });
