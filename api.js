@@ -3,7 +3,6 @@ import cors from "cors";
 import { pdfQueue, connection } from "./queue.js";
 import { QueueEvents } from "bullmq";
 import Razorpay from "razorpay";
-import express from "express";
 import crypto from "crypto";
 
 const app = express();
@@ -71,26 +70,6 @@ app.post("/order", async (req, res) => {
   }
 });
 
-app.get("/generate-pdf/:id", async (req, res) => {
-  const job = await pdfQueue.getJob(req.params.id);
-
-  if (!job) {
-    return res.status(404).json({ error: "Job not found" });
-  }
-
-  const state = await job.getState();
-
-  res.json({
-    jobId: job.id,
-    status: state.toUpperCase(),
-    progress: job.progress,
-    result: job.returnvalue || null,
-  });
-});
-
-
-
-
 app.post(
   "/webhook/razorpay",
   express.raw({ type: "application/json" }),
@@ -111,15 +90,34 @@ app.post(
     if (event.event === "payment.captured") {
       const payment = event.payload.payment.entity;
       console.log("✅ Payment confirmed:", payment.id);
-
-      // 👉 Update DB
-      // 👉 Mark order as PAID
-      // 👉 Unlock product / service
     }
-    // Razorpay expects 200 OK
+
     res.json({ status: "ok" });
   }
 );
+
+
+
+app.get("/generate-pdf/:id", async (req, res) => {
+  const job = await pdfQueue.getJob(req.params.id);
+
+  if (!job) {
+    return res.status(404).json({ error: "Job not found" });
+  }
+
+  const state = await job.getState();
+
+  res.json({
+    jobId: job.id,
+    status: state.toUpperCase(),
+    progress: job.progress,
+    result: job.returnvalue || null,
+  });
+});
+
+
+
+
 
 
 
