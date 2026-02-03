@@ -7,6 +7,11 @@ app.use(express.json());
 
 const queueEvents = new QueueEvents("pdf-queue", { connection });
 
+app.use(cors({
+  origin: "*", // 🔴 demo only
+  methods: ["GET", "POST"],
+}));
+
 app.post("/generate-pdf", async (req, res) => {
   const { pages = 10 } = req.body;
 
